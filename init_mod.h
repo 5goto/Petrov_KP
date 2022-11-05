@@ -2,6 +2,7 @@
 #include "hotel_main_classes.h"
 #include "hash_table_class.h"
 #include "tree_class.h"
+#include "tree.h"
 #include <fstream>
 #include <tuple>
 
@@ -29,33 +30,33 @@ protected:
 };
 
 
-class Init_Сleaning_Data_Base : Init_From_File<Сleaning*>
+class Init_Сleaning_Data_Base : Init_From_File<Performer*>
 {
     string data_base_name;
 
 public:
-    Init_Сleaning_Data_Base(string data_base = "Сleaning.txt") : data_base_name{ data_base } {}
-    AVL_tree<Сleaning*>* Init_Data_Base() 
+    Init_Сleaning_Data_Base(string data_base = "performers.txt") : data_base_name{ data_base } {}
+    BTree<Performer*>* Init_Data_Base()
     {
         string tmp; // для временного хранения строки
         vector<string> splitted_line; // вектор полей структуры
-        AVL_tree<Сleaning*>* data_base = new AVL_tree<Сleaning*>;
+        BTree<Performer*>* data_base = new BTree<Performer*>;
         ifstream file_for_input(data_base_name);
 
         while (getline(file_for_input, tmp))
         {
             splitted_line = str_split_by_one_space(tmp);
 
-            Сleaning* tmp_struct = new Сleaning{ splitted_line[0], stoi(splitted_line[1]),
-               stoi(splitted_line[2]), {stoi(splitted_line[3]), stoi(splitted_line[4]), stoi(splitted_line[5])} }; // инициализация полей структуры
-            data_base->insertWrap(tmp_struct);
+            Performer* tmp_struct = new Performer{ splitted_line[0], splitted_line[1],
+               splitted_line[2] }; // инициализация полей структуры
+            data_base->additem(tmp_struct);
         }
         file_for_input.close();
         return data_base;
     }
 };
 
-class Init_Room_Data_Base : Init_From_File<Room*>
+class Init_Room_Data_Base : Init_From_File<Project*>
 {
     string data_base_name;
     int size_of_base;
@@ -67,7 +68,7 @@ class Init_Room_Data_Base : Init_From_File<Room*>
         }
         return true;
     }
-    int culculate_base_size(string data_base = "Сleaning.txt")
+    int culculate_base_size(string data_base = "projects.txt")
     {
         ifstream file_for_input(data_base_name);
         string tmp;
@@ -89,8 +90,8 @@ class Init_Room_Data_Base : Init_From_File<Room*>
 
 public:
     
-    Init_Room_Data_Base(string data_base = "Room.txt") : data_base_name{ data_base }, size_of_base{} {}
-    SimpleHashTable<Room*>* Init_Data_Base(int& t_size) 
+    Init_Room_Data_Base(string data_base = "projects.txt") : data_base_name{ data_base }, size_of_base{} {}
+    SimpleHashTable<Project*>* Init_Data_Base(int& t_size) 
     {
 
         //size_of_base = culculate_base_size();
@@ -98,15 +99,15 @@ public:
         t_size = size_of_base;
         string tmp; // для временного хранения строки
         vector<string> splitted_line; // вектор полей структуры
-        SimpleHashTable<Room*>* data_base = new  SimpleHashTable<Room*>{ size_of_base };
+        SimpleHashTable<Project*>* data_base = new  SimpleHashTable<Project*>{ size_of_base };
         ifstream file_for_input(data_base_name);
 
         while (getline(file_for_input, tmp))
         {
             splitted_line = str_split_by_one_space(tmp);
 
-            Room* tmp_struct = new Room{ stoi(splitted_line[1]), stoi(splitted_line[0]),
-               stoi(splitted_line[2]) }; // инициализация полей структуры
+            Project* tmp_struct = new Project{ splitted_line[0], splitted_line[1],
+               stoi(splitted_line[2])}; // инициализация полей структуры
             data_base->add_element(tmp_struct);
         }
         file_for_input.close();

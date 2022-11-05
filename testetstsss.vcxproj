@@ -154,6 +154,7 @@
     <ClInclude Include="my_list.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="tree.h" />
     <ClInclude Include="tree_class.h" />
   </ItemGroup>
   <ItemGroup>

@@ -4,78 +4,57 @@
 #include <string>
 using namespace std;
 
-class Ñleaning
+long long polinomic_hash(string str)
 {
-	struct date_type
+	const int p = 31;
+	long long hash = 0, p_pow = 1;
+	for (size_t i = 0; i < str.length(); ++i)
 	{
-		int day;
-		int mounth;
-		int year;
-		date_type() : day{}, mounth{}, year{} {}
-		date_type(int day_, int mounth_, int year_) : day{ day_ }, mounth{ mounth_ }, year{ year_ } {}
+		// æåëàòåëüíî îòíèìàòü 'a' îò êîäà áóêâû
+		// åäèíèöó ïðèáàâëÿåì, ÷òîáû ó ñòðîêè âèäà 'aaaaa' õýø áûë íåíóëåâîé
+		hash += (str[i] - 'a' + 1) * p_pow;
+		p_pow *= p;
+	}
+	return hash;
+}
 
-		int get_int_time() { day + 30 * mounth + 365 * year; }
+class Performer
+{
+	
+	string performer;
+	string role;
+	string name;
 
-		bool operator ==(const date_type& other)
-		{
-			return day == other.day && mounth == other.mounth && year == other.year;
-		}
-		bool operator !=(const date_type& other)
-		{
-			return day != other.day || mounth != other.mounth || year != other.year;
-		}
-		bool operator >=(const date_type& other)
-		{
-			return day + 30 * mounth + 365 * year >= other.day + 30 * other.mounth + 365 * other.year;
-		}
-		bool operator <=(const date_type& other)
-		{
-			return day + 30 * mounth + 365 * year <= other.day + 30 * other.mounth + 365 * other.year;
-		}
-		bool operator >(const date_type& other)
-		{
-			return day + 30 * mounth + 365 * year > other.day + 30 * other.mounth + 365 * other.year;
-		}
-		bool operator <(const date_type& other)
-		{
-			return day + 30 * mounth + 365 * year < other.day + 30 * other.mounth + 365 * other.year;
-		}
-		friend ostream& operator << (ostream& out, date_type& object)
-		{
-			out << object.day << ":" << object.mounth << ":" << object.year;
-			return out;
-		}
-		int get_day() { return day; }
-		int get_mounth() { return mounth; }
-		int get_year() { return year; }
-	};
-	string employee;
-	int building;
-	int room_number; // key
-	date_type date;
+
 public:
-	Ñleaning(string employee_, int building_, int room_number_, date_type date_) : 
-		employee{ employee_ }, building{ building_ }, room_number{ room_number_ }, date{ date_ } {}
-	Ñleaning(date_type date_) : employee{}, building{}, room_number{}, date{date_} {}
-	Ñleaning() : employee{}, building{}, room_number{}, date{} {}
+	Performer(string performer_, string name_, string role_) :
+		performer{ performer_ }, role{ role_ }, name{ name_ } {}
+	Performer(string role_) : performer{}, role{role_}, name{} {}
+	Performer() : performer{}, role{}, name{} {}
 
-	date_type get_date() { return date; }
 
-	System::String^ get_date_string()
+	/*System::String^ get_date_string()
 	{
 		return "<" + date.get_day() + "/" + date.get_mounth() + "/" + date.get_year() + ">";
-	}
+	}*/
 	operator int() const
 	{
 		//return room_number;
-		return date.day + 30 * date.mounth + 365 * date.year;
+		/*long long tmp = polinomic_hash(role);*/
+		int counter{ };
+		for (auto i = 0; i < role.length(); ++i)
+			counter += (int)role[i];
+		return counter;
+		//return tmp;
 	}
 	auto get_all_data_string()
 	{
-		auto str_e = gcnew System::String(employee.c_str());
-		auto result = str_e + " Registr.: " + building.ToString() + " Room: "
-			+ room_number.ToString() + " Date: " + date.day.ToString() + "/" 
-			+ date.mounth.ToString() + "/" + date.year.ToString();
+		auto str_e = gcnew System::String(performer.c_str());
+		auto str_role = gcnew System::String(role.c_str());
+		auto str_des = gcnew System::String(name.c_str());
+
+		auto result = str_e + ":::" + str_des + ":::"
+			+ str_role;
 
 		return result;
 	}
@@ -86,113 +65,86 @@ public:
 		return date.day.ToString() + "/" + date.mounth.ToString() + "/" + date.year.ToString() + "(" + str_e + ")";
 	}*/
 
-	System::String^ get_all_date()
+	/*System::String^ get_all_date()
 	{
-		auto str_e = gcnew System::String(employee.c_str());
+		auto str_e = gcnew System::String(performer.c_str());
 		return (date.day + 30 * date.mounth + 365 * date.year).ToString() + "(" + str_e + ")";
-	}
+	}*/
 
-	bool operator ==(const Ñleaning& other)
+	bool operator ==(const Performer& other)
 	{
-		return date == other.date;
+		return role == other.role;
 	}
-	bool operator !=(const Ñleaning& other)
+	bool operator !=(const Performer& other)
 	{
-		return date != other.date;
+		return role != other.role;
 	}
-	bool operator >=(const Ñleaning& other)
+	bool operator >=(const Performer& other)
 	{
-		return date >= other.date;
+		return role >= other.role;
 	}
-	bool operator <=(const Ñleaning& other)
+	bool operator <=(const Performer& other)
 	{
-		return date <= other.date;
+		return role <= other.role;
 	}
-	bool operator >(const Ñleaning& other)
+	bool operator >(const Performer& other)
 	{
-		return date > other.date;
+		return role > other.role;
 	}
-	bool operator < (const Ñleaning& other)
+	bool operator < (const Performer& other)
 	{
-		return date < other.date;
+		return role < other.role;
 	}
-	friend ostream& operator << (ostream& out, Ñleaning& object)
-	{
-		out << "Employee: " << object.employee << " Building " << object.building << 
-			" Room number " << object.room_number << " | Date: " << object.date;
-		return out;
-	}
-	int get_room_num() { return room_number; }
-	int get_build() { return building; }
-	string get_emp() { return employee; }
-	int get_day() { return date.day; }
-	int get_mounth() { return date.mounth; }
-	int get_year() { return date.year; }
+	//friend ostream& operator << (ostream& out, Performer& object)
+	//{
+	//	out << "Employee: " << object.performer << " Building " << object.role << 
+	//		" Room number " << object.cost << " | Date: " << object.date;
+	//	return out;
+	//}
+	string get_name() { return name; }
+	string get_role() { return role; }
+	string get_performer() { return performer; }
 };
 
 
-enum class room_type
-{
-	standard = 0, superior, studio, delux
-};
 
-std::ostream& operator << (std::ostream& out, const room_type& t)
+class Project 
 {
-	switch (t) {
-	case room_type::standard: return (out << "Standard");
-	case room_type::superior: return (out << "Superior");
-	case room_type::studio: return (out << "Studio");
-	case room_type::delux: return (out << "Delux");
-	}
-	return (out);
-}
-
-
-class Room 
-{
-	int room_number;
-	int building;
-	room_type type;
+	string name;
+	string description;
+	int cost;
 public:
-	Room(int building_, int room_number_, int type_) :
-		room_number{ room_number_ }, building{ building_ }, type{ (room_type)type_ } {}
-	Room() : room_number{ }, building{  }, type{  } {}
+	Project(string name_, string performer_, int cost_) :
+		name{ name_ }, description{ performer_ }, cost{ cost_ } {}
+	Project() : name{ }, description{  }, cost{  } {}
 	operator int() const
 	{
-		return room_number;
+		int counter{ };
+		for (auto i = 0; i < name.length(); ++i)
+			counter += (int)name[i];
+		return counter;
 	}
 	auto get_all_data_string()
 	{
-		string str_type;
-		switch (type) {
-		case room_type::standard: str_type = "Standard";
-			break;
-		case room_type::superior: str_type = "Superior";
-			break;
-		case room_type::studio: str_type = "Studio";
-			break;
-		case room_type::delux: str_type = "Delux";
-			break;
-		}
-		auto str_final = gcnew System::String(str_type.c_str());
-		auto result = "Room: " + room_number.ToString() + " Build.: " + building.ToString() + " Type: "
-			+ str_final;
+		auto str_name = gcnew System::String(name.c_str());
+		auto str_performer = gcnew System::String(description.c_str());
+
+
+		auto result = str_name + ":::" + str_performer + ":::"
+			+ cost.ToString();
 
 		return result;
 	}
-	int get_type() { return (int)type; }
-	int get_room_num() { return room_number; }
-	friend ostream& operator << (ostream& out, Room& object)
+	string get_name() { return name; }
+	string get_description() { return description; }
+	int get_cost() { return cost; }
+
+	bool operator ==(const Project& other)
 	{
-		out << "Room number: " << object.room_number << " Building: " << object.building << " Type: " << object.type;
-		return out;
+		return name == other.name && description == other.description && cost == other.cost;
 	}
-	bool operator ==(const Room& other)
+	bool operator !=(const Project& other)
 	{
-		return room_number == other.room_number && building == other.building && type == other.type;
-	}
-	bool operator !=(const Room& other)
-	{
-		return room_number != other.room_number || building != other.building || type != other.type;
+		return name != other.name || description != other.description || cost != other.cost;
 	}
 };

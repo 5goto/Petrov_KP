@@ -4,21 +4,27 @@
 #include "tree_class.h"
 #include "init_mod.h"
 #include "hotel_main_classes.h"
+#include "tree.h"
 
+vector<int> hash_function_keys;
+vector<string> hash_function_objects_names;
 
-class HotelFacade // Паттерн фасад для усправления основными сущностями
+vector<vector<int>> tree_function_keys;
+vector<string> tree_function_objects_names;
+
+class Main_interface 
 {
-	AVL_tree<Сleaning*>* cleaning_data_base;
-	SimpleHashTable<Room*>* room_data_base;
+	BTree<Performer*>* performers_data_base;
+	SimpleHashTable<Project*>* project_data_base;
 	int hash_table_size;
 	bool inited;
 
 public:
-	HotelFacade() : cleaning_data_base{ nullptr }, room_data_base{ nullptr }, inited{false} {}
-	~HotelFacade()
+	Main_interface() : performers_data_base{ nullptr }, project_data_base{ nullptr }, inited{false} {}
+	~Main_interface()
 	{
-		delete cleaning_data_base;
-		delete room_data_base;
+		delete performers_data_base;
+		delete project_data_base;
 	}
 
 	void Init_Data_Bases(int size) // инициализация основных баз данных
@@ -26,8 +32,8 @@ public:
 		Init_Сleaning_Data_Base cleaning_base;
 		Init_Room_Data_Base room_base;
 		hash_table_size = size;
-		cleaning_data_base = cleaning_base.Init_Data_Base();
-		room_data_base = room_base.Init_Data_Base(hash_table_size);
+		performers_data_base = cleaning_base.Init_Data_Base();
+		project_data_base = room_base.Init_Data_Base(hash_table_size);
 		inited = true;
 	}
 
@@ -36,7 +42,7 @@ public:
 		return inited;
 	}
 
-	vector<string> Init_Cleaning_for_Form()
+	/*vector<string> Init_Cleaning_for_Form()
 	{
 		ifstream file_for_input("Сleaning.txt");
 		string tmp;
@@ -50,22 +56,27 @@ public:
 		}
 		file_for_input.close();
 		return result;
-	}
+	}*/
 
+	vector<int> get_initialize_hash_keys() { return hash_function_keys; }
+	vector<string> get_initialize_hash_objects_names() { return hash_function_objects_names; }
+
+	vector<vector<int>> get_tree_keys() { return tree_function_keys; }
+	vector<string> get_tree_names() { return tree_function_objects_names; }
 
 	auto get_all_tree_for_debug()
 	{
-		return cleaning_data_base;
+		return performers_data_base;
 	}
 
 	auto get_all_tree_for_drawning()
 	{
-		return cleaning_data_base->draw_wrap_return();
+		return performers_data_base->draw_wrap_return();
 	}
 
 	auto get_all_hash_table()
 	{
-		return room_data_base;
+		return project_data_base;
 	}
 
 	auto get_hash_table_size()
@@ -73,76 +84,82 @@ public:
 		return hash_table_size;
 	}
 
-	int insert_element_to_room_data_base(int room_t, int build, int room_num)
+	int insert_element_to_project(string name, string desc, int cost)
 	{
-		Room* tmp_struct = new Room{ build, room_num, room_t };
-		int op_result = room_data_base->add_element(tmp_struct);
+		Project* tmp_struct = new Project{ name, desc, cost };
+		int op_result = project_data_base->add_element(tmp_struct);
 		return op_result;
 	}
 
-	int delete_element_from_room_data_base(int room_t, int build, int room_num)
+	int delete_element_from_project(string name, string desc, int cost)
 	{
-		Room* tmp_struct = new Room{ build, room_num, room_t };
-		int op_result = room_data_base->delete_element(tmp_struct);
+		Project* tmp_struct = new Project{ name, desc, cost };
+		int op_result = project_data_base->delete_element(tmp_struct);
 		return op_result;
 	}
 
-	auto insert_element_to_cleaning_data_base(int room_num, int build, string emp, int day, int mounth, int year)
+	auto insert_element_to_performer(string perform, string name, string role)
 	{
-		Сleaning* tmp_struct = new Сleaning{ emp, build, room_num, {day, mounth, year} };
-		auto path = cleaning_data_base->insertWrap(tmp_struct);
+		Performer* tmp_struct = new Performer{ perform, name, role };
+		auto path = performers_data_base->additem(tmp_struct);
 		return path;
 	}
 
-	bool* delete_element_to_cleaning_data_base(int room_num, int build, string emp, int day, int mounth, int year)
+	auto delete_element_to_performer(string perform, string name, string role)
 	{
-		Сleaning* tmp_struct = new Сleaning{ emp, build, room_num, {day, mounth, year} };
-		auto process_result = cleaning_data_base->removeWrap(tmp_struct);
+		Performer* tmp_struct = new Performer{ perform, name, role };
+		auto process_result = performers_data_base->delete_wrap(tmp_struct);
 		return process_result;
 	}
 
-	auto find_all_elements_by_num(int room_num)
+	auto find_all_elements_by_name(string name)
 	{
-		auto elements_found = cleaning_data_base->searchOrderTraversWrapper(room_num);
+		auto elements_found = performers_data_base->searchOrderTraversWrapper(name);
 		return elements_found;
 	}
 
-	auto find_object_in_tree(int room_num, int build, string emp, int day, int mounth, int year)
+	auto find_object_in_tree(string perform, string name, string role)
 	{
-		Сleaning* tmp_struct = new Сleaning{ emp, build, room_num, {day, mounth, year} };
-		return cleaning_data_base->tree_search(tmp_struct);
+		Performer* tmp_struct = new Performer{ perform, name, role };
+		return performers_data_base->tree_search(tmp_struct);
 	}
 
-	auto find_object_in_table(int room_t, int build, int room_num)
+	auto find_object_in_table(string name, string description, int cost)
 	{
-		Room* tmp_struct = new Room{ build, room_num, room_t };
-		int operation_result = room_data_base->search_index(tmp_struct);
+		Project* tmp_struct = new Project{ name, description, cost };
+		int operation_result = project_data_base->search_index(tmp_struct);
 		if (operation_result != -1)
 			return true;
 		else
 			return false;
 	}
 
-
-	auto print_intermediate_result(int type, int fir_day, int sec_day,
-		int fir_mon, int sec_mon, int fir_yer, int sec_yer, int& comparsions)
+	int get_string_code(string object) // функция переводит Строку к числовому представлению - считает сумму кодов символов
 	{
-		Сleaning* low{ new Сleaning{{fir_day, fir_mon, fir_yer}} };
-		Сleaning* high{ new Сleaning{{sec_day, sec_mon, sec_yer}} };
+		int counter{ };
+		for (auto i = 0; i < object.length(); ++i)
+			counter += (int)object[i];
+		return counter;
+	}
 
+	auto print_intermediate_result(string role, int cost_low, int cost_hi, int& comparsions)
+	{
+		Performer* search_object{ new Performer{role} };
+		vector<Project*> result;
 
-		auto sub_result = cleaning_data_base->find_in_ranges_pre_order(low, high, comparsions);
+		auto sub_result = performers_data_base->search_wrap(search_object, comparsions);
 
-		vector<Сleaning*> result;
-
-		for (auto item : *sub_result)
+		while (sub_result != NULL)
 		{
-			auto tmp_2 = room_data_base->search_index(item->get_room_num());
-			if (!tmp_2)
-				continue;
-			auto tmp = tmp_2->get_type();
-			if (tmp == type)
-				result.push_back(item);
+			Project* tmp = project_data_base->search_index(get_string_code(sub_result->num->get_name()));
+			if (tmp != NULL)  
+			{
+				auto cost = tmp->get_cost();
+				if (cost >= cost_low && cost <= cost_hi ) // извлекаем поле возраста из объекта Манга и если оно совпадает с искомым
+					result.push_back(tmp); // записываем его в ответ
+			}
+			sub_result = sub_result->next;
+			comparsions++;
 		}
 		return result;
 	}
